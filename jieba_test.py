@@ -18,3 +18,4 @@ print("斷句結果：  " + "/".join(cut_comment))
 extract_cmt = jieba.analyse.extract_tags(fn_comment, topK=20, withWeight=True, allowPOS=('ns', 'n', 'vn', 'v'))
 for tag in extract_cmt:
     print("關鍵字：",tag[0],"出現頻率：",tag[1])
+#END
