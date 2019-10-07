@@ -27,9 +27,9 @@ def get_Sites(URL):
         print(id, site)
         id += 1
     return lst_Sites, lst_ID
-#     for each in open_status:
-#         status = each.text
-#         print(status)
+    for each in open_status:
+        status = each.text
+        print(status)
 
 
 url = 'https://travel.tycg.gov.tw/zh-tw/travel'
