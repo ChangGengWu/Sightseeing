@@ -1,25 +1,17 @@
 from selenium import webdriver
 import time
 import pandas as pd
+from selenium.common.exceptions import NoSuchElementException
+from time import sleep
 print("=============start=============", end='\n')
 tStart = time.time()
 driver = webdriver.Chrome("chromedriver")
 driver.get(
-    "https://www.tripadvisor.com.tw/Attractions-g304163-Activities-Taitung.html")
-# seemore = "//span[contains(@class, 'ui_icon single-chevron-down single-chevron-down')]"
-# driver.find_element_by_xpath(seemore).click()
-# a = driver.find_element_by_link_text('下一步')
-# print(a)
-while True:
-    seemore = "//span[contains(@class, 'ui_icon single-chevron-down single-chevron-down')]"
-    try:
-        driver.find_element_by_xpath(seemore).click()
-        if(driver.find_element_by_link_text('下一步')):
-            driver.find_element_by_link_text('下一步').click()
-        else:
-            break
-    except:
-        if(driver.find_element_by_link_text('下一步')):
-            driver.find_element_by_link_text('下一步').click()
-        else:
-            break
+    "https://www.tripadvisor.com.tw/Attractions-g293910-Activities-c57-Taiwan.html")
+driver.find_element_by_xpath("//span[contains(text(),'更多')]").click()
+sleep(2)
+more_xpath = "//div[contains(@class, 'filter_list_1')]/div[contains(@class, 'collapse ')]/div/label/a[contains(@class, 'taLnk')]"
+c_Attrs_m = driver.find_elements_by_xpath(more_xpath)
+for each_m in c_Attrs_m:
+    print(each_m.get_attribute('textContent'))
+
