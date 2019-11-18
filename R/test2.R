@@ -1,0 +1,6 @@
+#getwd()
+y <- read.csv("../Data/site_Data.csv",encoding = "UTF-8",header = F,stringsAsFactors = T)
+dim(y)
+print(y$site_name)
+nodes <- data.frame(id = c(y$id),label = c(y$site_name),font.size = 50,shape = 'circle')
+visNetwork(nodes,width = "100%")

@@ -116,6 +116,7 @@ def each_Info(index, xpath):
 
 
 #Main
+tStart = time.time()
 driver = webdriver.Chrome("chromedriver")
 url = "https://www.tripadvisor.com.tw/Attractions-g304163-Activities-Taitung.html"
 lst_Name, lst_Score, lst_Comment, lst_Address, lst_Tag = getSites(url)
@@ -126,4 +127,6 @@ for i in range(len(lst_Name)):
         lst_Id.append(S_id)
 df = pd.DataFrame({'id': lst_Id, 'site_name': lst_Name,
                    'site_address': lst_Address, 'comments': lst_Comment, 'tags': lst_Tag})
-df.to_csv("site_Data.csv", index=False, encoding='utf_8_sig')
+df.to_csv("site_Data_t.csv", index=False, encoding='utf_8_sig')
+tEnd = time.time()
+print("Run Time：", tEnd - tStart)

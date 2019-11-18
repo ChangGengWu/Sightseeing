@@ -1,5 +1,0 @@
-y <- read.csv("site_Data.csv",fileEncoding = "UTF-8-BOM")
-dim(y)
-print(y$id)
-nodes <- data.frame(id = c(y$id),label = c(y$id),font.size = 50,shape = 'circle')
-visNetwork(nodes,width = "100%")
