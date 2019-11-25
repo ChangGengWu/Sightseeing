@@ -6,6 +6,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.common.exceptions import NoSuchElementException
+import re
 
 #取得所有景點資訊
 def getSites(url):
@@ -27,6 +28,7 @@ def getSites(url):
     #當搜尋到最後一頁stop
     page = 1
     while(driver.current_url != lastPage):
+        #第一頁與其他頁程式內容不同
         if(page == 1):
             #每個景點的url
             all_Sites = driver.find_elements_by_xpath(p1_each)
@@ -52,19 +54,27 @@ def each_Info(all_url):
         page = requests.get(url).text
         soup = BeautifulSoup(page, 'html.parser')
         #景點名稱
-        name = soup.find('h1', id='HEADING').get_text()
+        name = soup.find('h1', id='HEADING').get_text().strip()
         #景點地址
-        address = soup.find('span', 'textAlignWrapper address').get_text()
+        try:
+            address = soup.find(
+                'span', 'textAlignWrapper address').get_text().strip()
+        except AttributeError:
+            address = "None"
         #景點評等
         try:
             score = soup.find('div', 'ratingContainer')
             rate = score.span['alt']
+            Rate = re.findall(r'[\d\.\d]+', rate)
+            rate = Rate[0]
         except AttributeError:
             rate = "None"
         #評論數
         try:
             comment = soup.find('span', 'reviewCount')
             c_comment = comment.get_text()
+            Com = re.findall(r'[\d\,\d]+', c_comment)
+            c_comment = int(Com[0].replace(",", ""))
         except AttributeError:
             c_comment = "None"
         #類別
@@ -74,9 +84,9 @@ def each_Info(all_url):
             if(i.get_text() == "更多"):
                 pass
             else:
-                lst_tag.append(i.get_text())
-        print("景點名：" + name + " 分數：" + rate + " 評論數：" +
-              c_comment + " 位置：" + address + " 分類：", lst_tag)
+                lst_tag.append(i.get_text().strip())
+        print("景點名：" + name + " 分數：" + rate + " 評論數：" ,
+              str(c_comment) + " 位置：" + address + " href：" + url)
     print("="*100)
 
 

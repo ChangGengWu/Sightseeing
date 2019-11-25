@@ -8,6 +8,8 @@ import mysql.connector
 tStart = time.time()
 
 #取得所有父類別網址
+
+
 def get_AttrURL(URL):
     driver.get(URL)
     attr_info = []
@@ -16,11 +18,13 @@ def get_AttrURL(URL):
     for each in all_Attrs:
         p_attr = each.get_attribute('textContent').split(" ")
         attr_url = each.get_attribute('href')
-        attr_info.append([p_attr[0],attr_url])
+        attr_info.append([p_attr[0], attr_url])
     return attr_info
 
 #取得每隔父類別的所有子類別
-def get_ChildAttr(p_Attr,URL):
+
+
+def get_ChildAttr(p_Attr, URL):
     driver.get(URL)
     driver.implicitly_wait(5)
     try:
@@ -47,37 +51,37 @@ def get_ChildAttr(p_Attr,URL):
         for each in c_Attrs:
             print(each.get_attribute('textContent'))
         pass
-    return p_a,c_a
+    return p_a, c_a
+
 
 #main
 driver = webdriver.Chrome("chromedriver")
-url="https://www.tripadvisor.com.tw/Attractions-g293910-Activities-Taiwan.html"
+url = "https://www.tripadvisor.com.tw/Attractions-g293910-Activities-Taiwan.html"
 cnx = mysql.connector.connect(
     host="localhost",
     user="root",
-    passwd="sightseeing",
-    database='homestead'
+    passwd="12345678",
+    database='test1'
 )
 cursor = cnx.cursor()
 lst_AttrURL = get_AttrURL(url)
 p_Attr = []
 c_Attr = []
 for i in lst_AttrURL:
-    a,b = get_ChildAttr(i[0],i[1])
+    a, b = get_ChildAttr(i[0], i[1])
     for k in range(len(a)):
         p_Attr.append(a[k])
         c_Attr.append(b[k])
-id = range(1,len(p_Attr)+1)
+id = range(1, len(p_Attr)+1)
 for each in range(len(p_Attr)):
     a_id = each+1
-    add_data = ("INSERT INTO site_attr"
-                "(id,type,tag) "
-                "VALUES (%s, %s,%s)")
-    data = (a_id,p_Attr[each], c_Attr[each])
+    add_data = ("INSERT INTO attr"
+                "(id,attr) "
+                "VALUES (%s, %s)")
+    data = (a_id,c_Attr[each])
     cursor.execute(add_data, data)
     cnx.commit()
 
-
-    print(a_id, p_Attr[each], c_Attr[each])
+    print(a_id,c_Attr[each])
 
 cnx.close()
