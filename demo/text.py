@@ -1,27 +1,47 @@
 import mysql.connector
 import re
-print("=============start=============", end='\n')
+from selenium import webdriver
+from bs4 import BeautifulSoup
+import requests
 
-cnx = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    passwd="12345678",
-    database='test1'
-)
-cursor = cnx.cursor(buffered=True)
-query1 = "SELECT id,name FROM site"
-cursor.execute(query1)
-for each in cursor:
-    id = each[0]
-    name = each[1].split(" ")
-    print(id + " " + name[0])
-    cursor2 = cnx.cursor(buffered=True)
-    query2 = ("UPDATE site"
-         " SET name=%s"
-         " WHERE id=%s")
-    data = (name[0],id)
-    cursor2.execute(query2,data)
-    cnx.commit()
+import pandas as pd
+
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException
+
+import datetime
+import time
+from time import sleep
+driver = webdriver.Chrome("chromedriver")
+url = "https://www.tripadvisor.com.tw/Attraction_Review-g13808515-d552573-Reviews-Taipei_101-Xinyi_District_Taipei.html"
+driver.get(url)
+try:
+    Bad_click = driver.find_element_by_xpath(
+                    "//label[contains(@for, 'ReviewRatingFilter_2')]")
+    webdriver.ActionChains(driver).move_to_element(
+                Bad_click).click(Bad_click).perform()
+except NoSuchElementException:
+    print('===')
+    pass
+
+a = driver.find_element_by_xpath(
+    "//input[contains(@id, 'ReviewRatingFilter_5')]").get_attribute("checked")
+
+b = driver.find_element_by_xpath(
+    "//input[contains(@id, 'ReviewRatingFilter_2')]").get_attribute("checked")
+
+print(a)
+print(b)
+
+
+# cnx = mysql.connector.connect(
+#     host="localhost",
+#     user="root",
+#     passwd="12345678",
+#     database='test1'
+# )
+# cursor = cnx.cursor(buffered=True)
+
 # for each in cursor:
 #     a = each[0].split(" ")
 #     print(a[0])
