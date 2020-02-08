@@ -57,10 +57,16 @@ def each_Info(city_name,all_url):
         page = requests.get(url).text
         soup = BeautifulSoup(page, 'html.parser')
         #景點名稱
+        name = ""
         try:
             name = soup.find('h1', id='HEADING').get_text().strip()
         except AttributeError:
-            pass
+            try:
+                page = requests.get(url).text
+                soup = BeautifulSoup(page, 'html.parser')
+                name = soup.find('h1', id='HEADING').get_text().strip()
+            except AttributeError:
+                pass
         #景點地址
         try:
             address = soup.find(

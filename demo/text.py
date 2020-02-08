@@ -12,28 +12,35 @@ from selenium.common.exceptions import NoSuchElementException
 import datetime
 import time
 from time import sleep
-driver = webdriver.Chrome("chromedriver")
-url = "https://www.tripadvisor.com.tw/Attraction_Review-g13808515-d552573-Reviews-Taipei_101-Xinyi_District_Taipei.html"
-driver.get(url)
-try:
-    Bad_click = driver.find_element_by_xpath(
-                    "//label[contains(@for, 'ReviewRatingFilter_2')]")
-    webdriver.ActionChains(driver).move_to_element(
-                Bad_click).click(Bad_click).perform()
-except NoSuchElementException:
-    print('===')
-    pass
+# driver = webdriver.Chrome("chromedriver")
+# url = "https://www.tripadvisor.com.tw/Attraction_Review-g13808515-d552573-Reviews-Taipei_101-Xinyi_District_Taipei.html"
+# driver.get(url)
+# try:
+#     Bad_click = driver.find_element_by_xpath(
+#                     "//label[contains(@for, 'ReviewRatingFilter_2')]")
+#     webdriver.ActionChains(driver).move_to_element(
+#                 Bad_click).click(Bad_click).perform()
+# except NoSuchElementException:
+#     print('===')
+#     pass
 
-a = driver.find_element_by_xpath(
-    "//input[contains(@id, 'ReviewRatingFilter_5')]").get_attribute("checked")
+# a = driver.find_element_by_xpath(
+#     "//input[contains(@id, 'ReviewRatingFilter_5')]").get_attribute("checked")
 
-b = driver.find_element_by_xpath(
-    "//input[contains(@id, 'ReviewRatingFilter_2')]").get_attribute("checked")
+# b = driver.find_element_by_xpath(
+#     "//input[contains(@id, 'ReviewRatingFilter_2')]").get_attribute("checked")
 
-print(a)
-print(b)
+# print(a)
+# print(b)
+# seg_id = 1
+# sid = "s0101"
+# sql3 = "SELECT seg_id FROM `site_segment` WHERE seg_id = '" + \
+#     str(seg_id) + "' AND site_id = '" + sid + "'"
+# print(sql3)
 
-
+a = "nr"
+b = "n"
+print(b in a)
 # cnx = mysql.connector.connect(
 #     host="localhost",
 #     user="root",

@@ -33,7 +33,7 @@ def add_Data(cnx,id, segment, evaluation):
 
 def eval_to_color(eval):
     color = "green"
-    if(eval =="正面評價"):
+    if(eval =="p"):
         color = color
     else:
         color = "red"
@@ -68,7 +68,9 @@ def get_all_comment(cnx,s_id):
         c_id = ele[0]
         comment = ele[1]
         evaluation = ele[2]
-        comment_seg(cnx, c_id, comment, evaluation, s_id)
+        print(comment)
+        #comment_seg(c_id, comment, evaluation, s_id)
+        build_relationship(cnx, comment, s_id)
 
 
 def comment_seg(cnx, c_id, comment, evaluation, s_id):
@@ -76,7 +78,7 @@ def comment_seg(cnx, c_id, comment, evaluation, s_id):
     sn_seg = site_name_segment(cnx, s_id)
     stopWords = lst_stopwords()
     #過濾停用詞與空格
-    remainderWords = remainderWords_maker(cnx, stopWords, sn_seg, comment)
+    remainderWords = remainderWords_maker(stopWords, sn_seg, comment)
     for ele in remainderWords:
         color = eval_to_color(evaluation)
         sql = "SELECT segment,color FROM `comment_segment` WHERE segment = '"+ ele + "' AND color = '" + color + "'"
@@ -89,15 +91,19 @@ def comment_seg(cnx, c_id, comment, evaluation, s_id):
         else:
             pass
 
-def remainderWords_maker(cnx, stopWords, sn_seg, comment):
+def remainderWords_maker(stopWords, sn_seg, comment):
     c_cut = jieba.cut(comment, cut_all=False)
     remainderWords = list(
         filter(lambda a: a not in stopWords and a != '\n' and a not in sn_seg and a != ' ', c_cut))
     return remainderWords
 
-def build_relationship(cnx,lst_seg):
-    remainderWords = lst_seg
-    print(remainderWords)
+
+def build_relationship(cnx, comment,s_id):
+    cursor = cnx.cursor(buffered=True)
+    sn_seg = site_name_segment(cnx, s_id)
+    stopWords = lst_stopwords()
+    #過濾停用詞與空格
+    remainderWords = remainderWords_maker(stopWords, sn_seg, comment)
     list_of_relation = [
         (s1, s2) for s1 in remainderWords for s2 in remainderWords if s1 != s2]
     for tup in list_of_relation:
@@ -113,7 +119,7 @@ def build_relationship(cnx,lst_seg):
             from_id = ele[0]
         for elee in cursor2:
             to_id = elee[0]
-        # add_Relationship(cnx,from_id, to_id)
+        add_Relationship(cnx,from_id, to_id)
         # cursor1.close()
         # cursor2.close()
 
