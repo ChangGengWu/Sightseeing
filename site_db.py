@@ -25,8 +25,9 @@ def getSites(city_name,url):
     rest_each = "//div[contains(@class, 'tracking_attraction_title listing_title')]/a"
 
     #確認最後一頁連結作為終止點
-    lastPage = driver.find_elements_by_xpath(
-        "//div[contains(@class, 'attractions-attraction-overview-main-Pagination__link--2m5mV')]/a")[-2].get_attribute('href')
+    # lastPage = driver.find_elements_by_xpath(
+    #     "//div[contains(@class, 'attractions-attraction-overview-main-Pagination__link--2m5mV attractions-attraction-overview-main-Pagination__cx_brand_refresh_phase2--3XKui')]/a").get_attribute('href')
+    lastPage = "https://www.tripadvisor.com.tw/Attractions-g293912-Activities-oa300-Tainan.html"
 
     #當搜尋到最後一頁stop
     page = 1
@@ -60,11 +61,15 @@ def each_Info(city_name,all_url):
         name = ""
         try:
             name = soup.find('h1', id='HEADING').get_text().strip()
+            name_temp = name.split(" ")
+            name = name_temp[0]
         except AttributeError:
             try:
                 page = requests.get(url).text
                 soup = BeautifulSoup(page, 'html.parser')
                 name = soup.find('h1', id='HEADING').get_text().strip()
+                name_temp = name.split(" ")
+                name = name_temp[0]
             except AttributeError:
                 pass
         #景點地址
@@ -83,7 +88,8 @@ def each_Info(city_name,all_url):
             rate = "None"
         #評論數
         try:
-            comment = soup.find('span', 'reviewCount')
+            comment = soup.find(
+                'span', 'attractions-attraction-review-header-attraction-review-header__reviewCount--3cEMP attractions-attraction-review-header-attraction-review-header__dotted_link--3p26D')
             c_comment = comment.get_text()
             Com = re.findall(r'[\d\,\d]+', c_comment)
             c_comment = int(Com[0].replace(",", ""))
@@ -105,9 +111,9 @@ def each_Info(city_name,all_url):
         new_id = get_newID()
         data_type = "site"
         #id,name,city,address,type,comment,rate,href
-        # add_Data(new_id, name, ct_name, address,
-        #          data_type, c_comment, rate, url)
-        # add_Relationship(new_id, lst_tag)
+        add_Data(new_id, name, ct_name, address,
+                 data_type, c_comment, rate, url)
+        add_Relationship(new_id, lst_tag)
 
         print("景點名：" + name + " 分數：" + rate + " 評論數：",
               str(c_comment) + " 位置：" + address + " href：" + url + "TAG", lst_tag)
@@ -115,7 +121,7 @@ def each_Info(city_name,all_url):
 
 def get_newID():
     last_id = ""
-    query = "SELECT MAX(id) FROM site"
+    query = "SELECT MAX(id) FROM site_data"
     cursor.execute(query)
     for id in cursor:
         num = re.findall(r'[\d\.\d]+', id[0])
@@ -125,8 +131,8 @@ def get_newID():
 
 #加入site資料到資料庫
 def add_Data(id,name,city_name,address,type,c_cmt,rate,href):
-    add_data = ("INSERT INTO site"
-                "(id,name,city,address,type,comment,rate,href) "
+    add_data = ("INSERT INTO site_data"
+                "(id,name,city_name,address,type,comment,rate,href) "
                 "VALUES (%s,%s,%s,%s,%s,%s,%s,%s)")
     data = (id, name, city_name , address , type , c_cmt , rate , href)
     cursor.execute(add_data, data)
@@ -134,11 +140,11 @@ def add_Data(id,name,city_name,address,type,c_cmt,rate,href):
 
 #加入連結到資料庫
 def add_Relationship(s_id,tags):
-    add_data = ("INSERT INTO `relationship`"
+    add_data = ("INSERT INTO `site_relationship`"
                 "(`from`, `to`) "
                 "VALUES (%s,%s)")
     for i in range(len(tags)):
-        query = "SELECT id FROM attr WHERE attr = '" + tags[i] +"'"
+        query = "SELECT id FROM site_attr WHERE tag = '" + tags[i] +"'"
         cursor.execute(query)
         for each in cursor:
             data = (s_id, each[0])
@@ -156,7 +162,7 @@ cnx = mysql.connector.connect(
     host="localhost",
     user="root",
     passwd="12345678",
-    database='test1'
+    database='test3'
 )
 cursor = cnx.cursor(buffered=True)
 for i in range(len(target)):

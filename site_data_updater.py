@@ -92,3 +92,4 @@ for each in cursor:
     print(s_id,"更新結束!!   更新日期：",today)
     print()
 
+ 
