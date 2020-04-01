@@ -10,6 +10,7 @@ import time
 from time import sleep
 import re
 import mysql.connector
+from touringDict import touringDict
 
 # driver = webdriver.Chrome("chromedriver")
 # driver.get("https://www.tripadvisor.com.tw/Attraction_Review-g304163-d6964072-Reviews-Dapo_Pond-Taitung.html")
@@ -148,12 +149,12 @@ import mysql.connector
 
 
 
-cnx2 = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    passwd="12345678",
-    database='test2'
-)
+# cnx2 = mysql.connector.connect(
+#     host="localhost",
+#     user="root",
+#     passwd="12345678",
+#     database='test2'
+# )
 
 # sql = "SELECT id,name,city_name,address,type,comment,rate,href FROM `site_data` WHERE city_name = '台南'"
 # cursor = cnx2.cursor(buffered=True)
@@ -193,22 +194,32 @@ cnx2 = mysql.connector.connect(
 #     cursor2.execute(add_data, data)
 #     cnx.commit()
 
-cnx = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    passwd="12345678",
-    database='test3',
-    buffered=True
-)
+# cnx = mysql.connector.connect(
+#     host="localhost",
+#     user="root",
+#     passwd="12345678",
+#     database='test3',
+#     buffered=True
+# )
 
-sql = "SELECT from_id,to_id FROM `site_relationship`"
-cursor2 = cnx.cursor()
-cursor3 = cnx.cursor()
-cursor2.execute(sql)
-for each in cursor2:
-    from_id = each[0]
-    sql = "SELECT id FROM `site_data` WHERE id = '" + from_id + "'"
-    cursor3.execute(sql)
-    entry = cursor3.fetchone()
-    if entry is None:
-        print(from_id)
+# sql = "SELECT from_id,to_id FROM `site_relationship`"
+# cursor2 = cnx.cursor()
+# cursor3 = cnx.cursor()
+# cursor2.execute(sql)
+# for each in cursor2:
+#     from_id = each[0]
+#     sql = "SELECT id FROM `site_data` WHERE id = '" + from_id + "'"
+#     cursor3.execute(sql)
+#     entry = cursor3.fetchone()
+#     if entry is None:
+#         print(from_id)
+
+a = touringDict("好多洗衣機")
+b = a.getNoun()
+c = a.getAdj()
+print(type(b))
+print(c)
+d = a.getClassification()
+print(type(d))
+e = a.getConclusion()
+print(e)
