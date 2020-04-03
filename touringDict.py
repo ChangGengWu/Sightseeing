@@ -13,12 +13,17 @@ class touringDict:
     # adj = getAdj(sentence)
     # conclusion = noun + adj
 
+    def setSentence(self,new_sentence):
+        self.sentence = new_sentence
+
     def getConclusion(self):
         n = self.getNoun()
         adj = self.getAdj()
         classification = self.getClassification()
         conclusion = str(n) + str(classification)
-        return conclusion
+        conclude = dictFilter(conclusion)
+        return conclude
+        
 
 
     def getNoun(self):
@@ -32,7 +37,7 @@ class touringDict:
                 result_noun = n
                 break
             else:
-                continue
+                result_noun = None
         return result_noun
 
     def getAdj(self):
@@ -46,7 +51,7 @@ class touringDict:
                 result_adj = a
                 break
             else:
-                continue
+                result_adj = None
         return result_adj
 
     def getClassification(self):
@@ -186,3 +191,14 @@ class touringDict:
         elif (adjs in not_stable):
             conclusion = "不穩定"
         return conclusion
+
+def dictFilter(conclusion):
+    filter_dict = []
+    with open('dict.txt', 'r', encoding='UTF-8', errors='ignore') as file:
+        for data in file.readlines():
+            data = data.strip()
+            filter_dict.append(data)
+    if conclusion in filter_dict:
+        return conclusion
+    else:
+        return None
