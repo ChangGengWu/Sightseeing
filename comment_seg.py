@@ -9,21 +9,21 @@ def config():
         host="localhost",
         user="root",
         passwd="12345678",
-        database='test2',
+        database='test3',
         buffered=True
     )
     return cnx
 
 def comment_seg(cnx):
     cursor_all = cnx.cursor()
-    sql = "SELECT id,comment,evaluation,site_ID FROM `user_comment3` WHERE site_ID = 'S0102'"
+    sql = "SELECT id,comment,evaluation,Sid FROM `user_comment` WHERE Sid = 'S0102'"
     cursor_all.execute(sql)
     for each in cursor_all:
         result = []
         comment = each[1]
         evaluation = each[2]
         site_id = each[3]
-        color = eval_to_color(evaluation)
+        # color = eval_to_color(evaluation)
         print("=================================================")
         print(comment)
         keyword_lst = []
@@ -35,8 +35,9 @@ def comment_seg(cnx):
         for seg in seg_lst:
             sentence.setSentence(seg)
             conclude = sentence.getConclusion()
-            if conclude != None:
-                keyword_lst.append(conclude)
+            color = "green" if sentence.ifPositive() else "red"
+            if (conclude != None) and (conclude not in keyword_lst):
+                keyword_lst.append([conclude,color])
             else:
                 pass
         print(keyword_lst)
@@ -85,7 +86,7 @@ def add_Relationship(cnx,from_id, to_id, site_id):
 
 def eval_to_color(eval):
     color = "green"
-    if(eval == "正面評價"):
+    if(eval == "P"):
         color = color
     else:
         color = "red"

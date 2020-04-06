@@ -13,9 +13,11 @@ class touringDict:
     # adj = getAdj(sentence)
     # conclusion = noun + adj
 
+    #sentence setter
     def setSentence(self,new_sentence):
         self.sentence = new_sentence
 
+    #conclusion getter
     def getConclusion(self):
         n = self.getNoun()
         adj = self.getAdj()
@@ -24,8 +26,7 @@ class touringDict:
         conclude = dictFilter(conclusion)
         return conclude
         
-
-
+    #noun getter
     def getNoun(self):
         noun = []
         with open('tourNoun.txt', 'r', encoding='UTF-8', errors='ignore') as file:
@@ -40,6 +41,7 @@ class touringDict:
                 result_noun = None
         return result_noun
 
+    #adj getter
     def getAdj(self):
         adj = []
         with open('tourAdj.txt', 'r', encoding='UTF-8', errors='ignore') as file:
@@ -53,6 +55,15 @@ class touringDict:
             else:
                 result_adj = None
         return result_adj
+    
+    #return positive or negative
+    def ifPositive(self):
+        negative = ['髒亂', '難吃', '無趣', '態度不佳', '難找',
+                           '擁擠', '不推薦', '簡陋', '老舊', '不好看', '昂貴', '不方便', '不足', '不清楚']
+        if self.getClassification() in negative:
+            return False
+        else:
+            return True
 
     def getClassification(self):
         adjs = self.getAdj()
