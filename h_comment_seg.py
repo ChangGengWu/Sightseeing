@@ -4,6 +4,8 @@ import mysql.connector
 from touringDict import touringDict
 
 #建立connecter
+
+
 def config():
     cnx = mysql.connector.connect(
         host="localhost",
@@ -13,6 +15,7 @@ def config():
         buffered=True
     )
     return cnx
+
 
 def comment_seg(cnx):
     cursor_all = cnx.cursor()
@@ -56,9 +59,9 @@ def comment_seg(cnx):
             idid = ""
             ct += 1
             for word in pn_lst:
-                print(word,color)
-            #     add_Data(cnx, idid, word, color, shape, site_id)
-            # build_relationship(cnx, pn_lst, color, site_id)
+                print(word, color)
+                add_Data(cnx, idid, word, color, shape, site_id)
+            build_relationship(cnx, pn_lst, color, site_id)
         # for word in keyword_lst:
         #     shape = "circle"
         #     idid = ""
@@ -66,24 +69,28 @@ def comment_seg(cnx):
         # build_relationship(cnx, keyword_lst, color, site_id)
 
 #add segment to database
-def add_Data(cnx,new_id, segment, color, shape, site_id):
+
+
+def add_Data(cnx, new_id, segment, color, shape, site_id):
     cursor = cnx.cursor(buffered=True)
-    if_exist = check_exist(cnx,segment, color, site_id)
+    if_exist = check_exist(cnx, segment, color, site_id)
     if (if_exist == True):
         pass
     else:
-        add_data = ("INSERT INTO segment_data"
-                    "(id, segment, color, shape, site_id)"
+        add_data = ("INSERT INTO h_segment_data"
+                    "(id, segment, color, shape, hotel_id)"
                     "VALUES (%s,%s,%s,%s,%s)")
         data = (new_id, segment, color, shape, site_id)
         cursor.execute(add_data, data)
         cnx.commit()
 
 #check if segment exist in database
-def check_exist(cnx,segment, color, site_id):
+
+
+def check_exist(cnx, segment, color, site_id):
     cursor = cnx.cursor(buffered=True)
-    sql = "SELECT id FROM segment_data WHERE segment = '" + segment + \
-        "' AND color = '" + color + "' AND site_id = '" + site_id + "'"
+    sql = "SELECT id FROM h_segment_data WHERE segment = '" + segment + \
+        "' AND color = '" + color + "' AND hotel_id = '" + site_id + "'"
     cursor.execute(sql)
     entry = cursor.fetchone()
     if entry is None:
@@ -92,14 +99,17 @@ def check_exist(cnx,segment, color, site_id):
         return True
 
 #add relationship to database
-def add_Relationship(cnx,from_id, to_id, site_id):
+
+
+def add_Relationship(cnx, from_id, to_id, site_id):
     cursor = cnx.cursor()
-    add_relation = ("INSERT INTO `segment_relationship`"
-                    "(from_id, to_id, site_id) "
+    add_relation = ("INSERT INTO `h_segment_relationship`"
+                    "(from_id, to_id, hotel_id) "
                     "VALUES (%s,%s,%s)")
     data = (from_id, to_id, site_id)
     cursor.execute(add_relation, data)
     cnx.commit()
+
 
 def eval_to_color(eval):
     color = "green"
@@ -110,14 +120,16 @@ def eval_to_color(eval):
     return color
 
 #bulid relationship (red to red) (green to green) in each comment
-def build_relationship(cnx,keyword_lst, color, site_id):
+
+
+def build_relationship(cnx, keyword_lst, color, site_id):
     for i in range(len(keyword_lst) - 1):
         print(keyword_lst[i], color)
         cursor1 = cnx.cursor(buffered=True)
         cursor2 = cnx.cursor(buffered=True)
-        sql = "SELECT id FROM `segment_data` WHERE segment = '" + \
+        sql = "SELECT id FROM `h_segment_data` WHERE segment = '" + \
             keyword_lst[i] + "' AND color = '" + color + "'"
-        sql_2 = "SELECT id FROM `segment_data` WHERE segment = '" + \
+        sql_2 = "SELECT id FROM `h_segment_data` WHERE segment = '" + \
             keyword_lst[i+1] + "' AND color = '" + color + "'"
         cursor1.execute(sql)
         cursor2.execute(sql_2)
@@ -127,10 +139,12 @@ def build_relationship(cnx,keyword_lst, color, site_id):
             from_id = ele[0]
         for elee in cursor2:
             to_id = elee[0]
-        add_Relationship(cnx,from_id, to_id, site_id)
+        add_Relationship(cnx, from_id, to_id, site_id)
+
 
 def main():
     cnx = config()
     comment_seg(cnx)
+
 
 main()

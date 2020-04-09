@@ -59,7 +59,7 @@ class touringDict:
     #return positive or negative
     def ifPositive(self):
         negative = ['髒亂', '難吃', '無趣', '態度不佳', '難找',
-                           '擁擠', '不推薦', '簡陋', '老舊', '不好看', '昂貴', '不方便', '不足', '不清楚']
+                           '擁擠', '不推薦', '簡陋', '老舊', '不好看', '昂貴', '不方便', '不足', '不清楚','不具備']
         if self.getClassification() in negative:
             return False
         else:
@@ -82,11 +82,9 @@ class touringDict:
         ugly = ['難看', '醜']
         delicious = ['好吃']
         yucky = ['不好吃', '難吃']
-        wonderful = ['厲害', '細膩', '用心', '驚喜', '很棒', '創意', '強大']
+        wonderful = ['厲害', '細膩', '用心', '驚喜', '很棒', '強大']
         boring = ['無聊', '無趣']
-        interesting = ['有趣']
-        hot = ['不夠冷', '熱', '曬', '悶']
-        cold = ['凍', '寒', '冷']
+        interesting = ['有趣', '好玩', '開心']
         clean = ['整潔', '乾淨']
         mess = ['不乾淨', '骯髒', '亂', '髒']
         convenient = ['超方便', '便利', '方便']
@@ -99,23 +97,23 @@ class touringDict:
                       '沒耐心', '沒耐性', '傲慢', '兇', '愛理不理', '不耐煩', '冷淡']
         far = ['路途遙遠', '遙遠', '遠', '不近']
         close = ['鄰近', '近', '不遠']
-        recommend = ['印象深刻', '嘆為觀止', '讚嘆', '佩服', '震撼', '特別好', '沒話說',
-                     '推薦', '開心', '喜歡', '好玩', '適合', '值得', '酷', '常來', '不錯']
+        recommend = ['推薦', '喜歡', '適合', '值得']
         hard_to_find = ['非常難找', '難求', '一位難求']
         many_people = ['擁擠', '紊亂', '擠']
         quient = ['寧靜', '安靜', '平靜']
         lively = ['熱鬧']
         comfortable = ['更舒服', '舒適', '新鮮', '明亮', '優美', '舒服']
-        blurry = ['不夠清楚', '不夠簡單', '有落差', '差太多', '不清楚', '複雜', '失望', '不易']
-        good = ['最棒的', '特別好', '沒話說', '良好', '優秀', '好', '棒', '好', '優', '佳']
+        blurry = ['不夠清楚', '不夠簡單', '有落差', '不清楚', '複雜', '不易']
+        good = ['最棒的', '特別好', '沒話說', '良好', '優秀',
+                '好', '棒', '好', '優', '佳', '沒話說', '不錯', '印象深刻', '嘆為觀止', '讚嘆', '震撼']
         bad = ['不是特別好', '非常不好', '美中不足', '再加強', '不理想', '不建議', '沒品質', '不值得',
-               '詭異', '害怕', '危險', '掃興', '差勁', '不推', '糟糕', '爛', '不良', '不佳']
+               '詭異', '害怕', '危險', '掃興', '差勁', '不推', '糟糕', '爛', '不良', '不佳', '失望', '不適合', '不是很好']
         have = ['有', '具備']
-        no_have = ['沒有', '不具備']
+        no_have = ['沒有', '不具備', '沒']
         not_stable = ['不太穩定', '不穩定']
         stable = ['穩定']
         elses = ['簡陋', '有力', '異常', '迅速', '老舊', '完善',
-                 '適中', '一般', '新穎', '豐盛', '豪華', '怪', '軟', '久', '慢']
+                 '適中', '一般', '新穎', '豐盛', '豪華', '怪', '軟', '久', '慢', '硬']
         conclusion = ""
         if(adjs in many):
             conclusion = "多"
@@ -143,10 +141,10 @@ class touringDict:
             conclusion = "值得一看"
         elif(adjs in boring):
             conclusion = "無趣"
-        elif(adjs in hot):
-            conclusion = "炎熱"
-        elif(adjs in cold):
-            conclusion = "寒冷"
+        # elif(adjs in hot):
+        #     conclusion = "炎熱"
+        # elif(adjs in cold):
+        #     conclusion = "寒冷"
         elif(adjs in clean):
             conclusion = "乾淨"
         elif(adjs in mess):
@@ -180,7 +178,7 @@ class touringDict:
         elif(adjs in good):
             conclusion = "評價好的"
         elif(adjs in bad):
-            conclusion = "不推薦"
+            conclusion = "評價差的"
         elif (adjs in elses):
             conclusion = adjs
         elif (adjs in close):

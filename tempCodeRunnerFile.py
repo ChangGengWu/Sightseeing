@@ -1,6 +1,2 @@
-with open('tourNoun.txt', 'w') as f:
-#        for each in noun:
-#               f.write("%s\n" % each)
-# with open('tourAdj.txt', 'w') as f:
-#        for each in adj:
-#               f.write("%s\n" % each)
+                add_Data(cnx, idid, word, color, shape, site_id)
+            build_relationship(cnx, pn_lst, color, site_id)
