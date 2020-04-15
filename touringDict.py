@@ -59,12 +59,15 @@ class touringDict:
     #return positive or negative
     def ifPositive(self):
         negative = ['髒亂', '難吃', '無趣', '態度不佳', '難找',
-                           '擁擠', '不推薦', '簡陋', '老舊', '不好看', '昂貴', '不方便', '不足', '不清楚','不具備']
+                    '擁擠', '評價差的', '簡陋', '老舊', '不好看', '昂貴', '不方便', '不足', '不清楚', '不具備']
+        positive = ['便宜', '免費', '美麗', '好吃', '值得一看',
+                    '乾淨', '方便', '態度優良', '推薦前往', '舒適', '評價好的', '齊全', '有趣', '完善', '新穎', '豐盛', '豪華']
         if self.getClassification() in negative:
-            return False
+            return 0
+        if self.getClassification() in positive:
+            return 1
         else:
-            return True
-
+            return 2
     def getClassification(self):
         adjs = self.getAdj()
         many = ['種類多', '有點多', '多到爆', '非常多', '蠻多', '超多',
@@ -80,7 +83,7 @@ class touringDict:
         beautiful = ['美麗的', '漂亮的', '好美', '美', '精緻',
                      '栩栩如生', '鬼斧神工', '精美', '壯觀', '雅緻', '漂亮', '美麗']
         ugly = ['難看', '醜']
-        delicious = ['好吃']
+        delicious = ['好吃',"美味",'美食']
         yucky = ['不好吃', '難吃']
         wonderful = ['厲害', '細膩', '用心', '驚喜', '很棒', '強大']
         boring = ['無聊', '無趣']

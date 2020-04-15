@@ -11,6 +11,7 @@ from time import sleep
 import re
 import mysql.connector
 from touringDict import touringDict
+import numpy as np
 
 # driver = webdriver.Chrome("chromedriver")
 # driver.get("https://www.tripadvisor.com.tw/Attraction_Review-g304163-d6964072-Reviews-Dapo_Pond-Taitung.html")
@@ -214,12 +215,19 @@ from touringDict import touringDict
 #     if entry is None:
 #         print(from_id)
 
-a = touringDict()
-a.setSentence("好多洗衣機")
-print(a.sentence)
-c = a.getConclusion()
-a.setSentence("沙雕好大")
-print(a.sentence)
-d = a.getConclusion()
-print(c)
-print(d)
+# a = touringDict()
+# a.setSentence("好多洗衣機")
+# print(a.sentence)
+# c = a.getConclusion()
+# a.setSentence("沙雕好大")
+# print(a.sentence)
+# d = a.getConclusion()
+# print(c)
+# print(d)
+a = [["a", "red", 1], ["b", "red", 3], ["c", "green", 5]]
+v = "b"
+clr = "red"
+for each in a:
+    if each[0] == v and each[1] == clr:
+        each[2] += 1
+print(a)

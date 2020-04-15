@@ -69,8 +69,6 @@ def comment_seg(cnx):
         # build_relationship(cnx, keyword_lst, color, site_id)
 
 #add segment to database
-
-
 def add_Data(cnx, new_id, segment, color, shape, site_id):
     cursor = cnx.cursor(buffered=True)
     if_exist = check_exist(cnx, segment, color, site_id)
@@ -85,8 +83,6 @@ def add_Data(cnx, new_id, segment, color, shape, site_id):
         cnx.commit()
 
 #check if segment exist in database
-
-
 def check_exist(cnx, segment, color, site_id):
     cursor = cnx.cursor(buffered=True)
     sql = "SELECT id FROM h_segment_data WHERE segment = '" + segment + \
@@ -99,8 +95,6 @@ def check_exist(cnx, segment, color, site_id):
         return True
 
 #add relationship to database
-
-
 def add_Relationship(cnx, from_id, to_id, site_id):
     cursor = cnx.cursor()
     add_relation = ("INSERT INTO `h_segment_relationship`"
@@ -120,8 +114,6 @@ def eval_to_color(eval):
     return color
 
 #bulid relationship (red to red) (green to green) in each comment
-
-
 def build_relationship(cnx, keyword_lst, color, site_id):
     for i in range(len(keyword_lst) - 1):
         print(keyword_lst[i], color)

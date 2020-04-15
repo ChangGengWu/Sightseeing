@@ -1,2 +1,4 @@
-                add_Data(cnx, idid, word, color, shape, site_id)
-            build_relationship(cnx, pn_lst, color, site_id)
+    # for node in nodes_array:
+    #     print(node)
+    # for relationship in relationships_array:
+    #     print(relationship)
