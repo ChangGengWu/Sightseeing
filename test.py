@@ -224,10 +224,7 @@ import numpy as np
 # d = a.getConclusion()
 # print(c)
 # print(d)
-a = [["a", "red", 1], ["b", "red", 3], ["c", "green", 5]]
+a = [['夜景評價好的', 'green'], ['親子推薦前往', 'green'], 1]
 v = "b"
 clr = "red"
-for each in a:
-    if each[0] == v and each[1] == clr:
-        each[2] += 1
-print(a)
+print(a[0][1])
