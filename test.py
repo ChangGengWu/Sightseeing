@@ -224,7 +224,15 @@ import numpy as np
 # d = a.getConclusion()
 # print(c)
 # print(d)
-a = [['夜景評價好的', 'green'], ['親子推薦前往', 'green'], 1]
-v = "b"
-clr = "red"
-print(a[0][1])
+# a = [['夜景評價好的', 'green'], ['親子推薦前往', 'green'], 1]
+# v = "b"
+# clr = "red"
+# print(a[0][1])
+# from_id = 1
+# to_id = 2
+# color = "green"
+# site_id = 'S0101'
+# sql = "SELECT * FROM segment_relationship WHERE from_id = '" + str(from_id) + \
+#     "' AND to_id = '" + str(to_id) + "' AND color = '" + \
+#     color + "' AND site_id = '" + site_id + "'"
+# print(sql)

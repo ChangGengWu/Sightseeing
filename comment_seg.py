@@ -20,10 +20,10 @@ def comment_seg(cnx):
     sql = "SELECT id, comment, evaluation, Sid FROM `user_comment` WHERE Sid = 'S0102'"
     #sql = "SELECT id, comment, evaluation, Sid FROM `hotel_comment` WHERE Sid = 'H00008'"
     cursor_all.execute(sql)
-    #array that save node's value,color,weight
-    nodes_array = [["value", "color", 0]]
+    #array that save node's value,color,weight,eval
+    nodes_array = [["value", "color", 0,'eval']]
     #array that save relationships's from,to,weight
-    relationships_array = [[["from", "color"], ["to", "color"], 0]]
+    relationships_array = [[["from", "color"], ["to", "color"]]]
     for each in cursor_all:
         result = []
         comment = each[1]
@@ -65,72 +65,133 @@ def comment_seg(cnx):
                         each[2] += 1
                         flag = 1
                         break
-                if flag == 0:nodes_array.append([concludsion,color,1])
+                if flag == 0:nodes_array.append([concludsion,color,1,evaluation])
 
         for i in range(len(positive_seg) - 1):
             from_seg = positive_seg[i]
             to_seg = positive_seg[i+1]
             flag = 0
-            for each in relationships_array:
-                # print(each[0][0], from_seg)
-                #如果from to 值相同且顏色同為綠色 weight+1
-                if(each[0] == from_seg and each[1] == to_seg) or (each[1] == from_seg and each[0] == to_seg):
-                    # print(each[0], each[1], each[2])
-                    each[2] += 1
-                    flag = 1
-                    break
-            if flag == 0:
-                relationships_array.append([from_seg, to_seg, 1])
+            relationships_array.append([from_seg, to_seg])
         
         for i in range(len(negative_seg) - 1):
             from_seg = negative_seg[i]
             to_seg = negative_seg[i+1]
             flag = 0
-            for each in relationships_array:
-                # print(each[0][0], from_seg)
-                #如果from to 值相同且顏色同為綠色 weight+1
-                if(each[0] == from_seg and each[1] == to_seg) or (each[1] == from_seg and each[0] == to_seg):
-                    # print(each[0], each[1], each[2])
-                    each[2] += 1
-                    flag = 1
-                    break
-            if flag == 0:
-                relationships_array.append([from_seg, to_seg, 1])
-    
+            relationships_array.append([from_seg, to_seg])
+
+    nodes_array.pop(0)
     # for node in nodes_array:
     #     idid=""
     #     shape = "circle"
     #     word = node[0]
     #     color = node[1]
     #     weight = node[2]
-    #     add_Data(cnx, idid, word, color, shape, weight,site_id)
-    for relationship in relationships_array:
-        from_id = relationship[0][0]
-        color = relationship[0][1]
-        to_id = relationship[1][0]
-        weight = 1
-        add_Relationship(cnx, from_id, to_id, color, weight, site_id)
+    #     evaluation = node[3]
+    #     add_Data(cnx, idid, word, color, shape, weight,evaluation,site_id)
+    # relationships_array.pop(0)
+    # # print(relationships_array)
+    # for relationship in relationships_array:
+    #     from_seg = relationship[0][0]
+    #     color = relationship[0][1]
+    #     to_seg = relationship[1][0]
+    #     from_id,to_id = build_relationship(cnx, from_seg, to_seg, color, site_id)
+    #     print(from_id, to_id)
+    #     weight = 1
+    #     add_Relationship(cnx, from_id, to_id, color, weight, site_id)
 
+    markTopTwo_nodes(cnx)
+    markTopTwo_relationships(cnx)
+
+
+def markTopTwo_nodes(cnx):
+    cursor = cnx.cursor(buffered=True)
+    cursor2 = cnx.cursor(buffered=True)
+    cursor3 = cnx.cursor(buffered=True)
+    sql_1 = "SELECT id FROM `segment_data` WHERE weight > 2 AND evaluation = 'P' ORDER BY weight DESC LIMIT 2"
+    sql_2 = "SELECT id FROM `segment_data` WHERE weight > 2 AND evaluation = 'N' ORDER BY weight DESC LIMIT 2"
+    cursor.execute(sql_1)
+    cursor3.execute(sql_2)
+    counter = 0
+    for rec in cursor:
+        idid = rec[0]
+        print(id)
+        query2 = ("UPDATE segment_data"
+                  " SET color=%s"
+                  " WHERE id=%s")
+        if counter == 0:
+            data = ("brown",idid)
+        else:
+            data = ("blue", idid)
+        cursor2.execute(query2, data)
+        cnx.commit()
+        counter += 1
+
+    counter2 = 0
+    for rec in cursor3:
+        idid = rec[0]
+        print(id)
+        query2 = ("UPDATE segment_data"
+                  " SET color=%s"
+                  " WHERE id=%s")
+        if counter2 == 0:
+            data = ("yello", idid)
+        else:
+            data = ("gray", idid)
+        cursor2.execute(query2, data)
+        cnx.commit()
+        counter2 += 1
+
+
+def markTopTwo_relationships(cnx):
+    cursor = cnx.cursor(buffered=True)
+    cursor2 = cnx.cursor(buffered=True)
+    cursor3 = cnx.cursor(buffered=True)
+    sql_1 = "SELECT from_id,to_id,site_id FROM `segment_relationship` WHERE weight >= 2 ORDER BY weight DESC LIMIT 6"
+    cursor.execute(sql_1)
+    counter = 0
+    for rec in cursor:
+        idid = rec[2]
+        from_id = rec[0]
+        to_id = rec[1]
+        print(id)
+        query2 = ("UPDATE segment_relationship"
+                  " SET color=%s"
+                  " WHERE from_id=%s AND to_id=%s AND site_id=%s")
+        data = ("orange", from_id,to_id,idid)
+        cursor2.execute(query2, data)
+        cnx.commit()
+        counter += 1
+
+    counter2 = 0
+    for rec in cursor3:
+        idid = rec[0]
+        print(id)
+        query2 = ("UPDATE segment_data"
+                  " SET color=%s"
+                  " WHERE id=%s")
+        if counter2 == 0:
+            data = ("yello", idid)
+        else:
+            data = ("gray", idid)
+        cursor2.execute(query2, data)
+        cnx.commit()
+        counter2 += 1
 
 #add segment to database
-def add_Data(cnx, new_id, segment, color, shape, weight, site_id):
+def add_Data(cnx, new_id, segment, color, shape, weight,evaluation, site_id):
     cursor = cnx.cursor(buffered=True)
-    # if_exist = check_exist(cnx,segment, color, site_id)
-    # if (if_exist == True):
-    #     pass
-    # else:
     add_data = ("INSERT INTO segment_data"
-                "(id, segment, color, shape,weight, site_id)"
-                "VALUES (%s,%s,%s,%s,%s,%s)")
-    data = (new_id, segment, color, shape,weight, site_id)
+                "(id, segment, color, shape,weight,evaluation ,site_id)"
+                "VALUES (%s,%s,%s,%s,%s,%s,%s)")
+    data = (new_id, segment, color, shape,weight,evaluation, site_id)
     cursor.execute(add_data, data)
     cnx.commit()
 
-#check if segment exist in database
+#check if relationship exist in database
 def check_exist(cnx, from_id, to_id, color, site_id):
     cursor = cnx.cursor(buffered=True)
-    sql = "SELECT * FROM segment_relationship WHERE from_id = '" + from_id + \
-        "' AND to_id = '" + to_id + "' AND color = '" + \
+    sql = "SELECT * FROM segment_relationship WHERE from_id = '" + str(from_id) + \
+        "' AND to_id = '" + str(to_id) + "' AND color = '" + \
         color + "' AND site_id = '" + site_id + "'"
     cursor.execute(sql)
     entry = cursor.fetchone()
@@ -142,11 +203,14 @@ def check_exist(cnx, from_id, to_id, color, site_id):
 
 #add relationship to database
 def add_Relationship(cnx, from_id, to_id, color, weight, site_id):
+    # print("正在加入", from_id, to_id)
     if_exist = check_exist(cnx, from_id, to_id, color, site_id)
     if (if_exist == True):
+        print("重複")
         updateWeight(cnx, from_id, to_id, color, site_id)
     else:
         cursor = cnx.cursor()
+        # print(from_id,to_id)
         add_relation = ("INSERT INTO `segment_relationship`"
                         "(from_id, to_id,color,weight ,site_id) "
                         "VALUES (%s,%s,%s,%s,%s)")
@@ -170,8 +234,8 @@ def getColor(index,eval):
 
 
 def updateWeight(cnx, from_id, to_id, color, site_id):
-    sql = "SELECT weight FROM segment_relationship WHERE from_id = '" + from_id + \
-        "' AND to_id = '" + to_id + "' AND color = '" + \
+    sql = "SELECT weight FROM segment_relationship WHERE from_id = '" + str(from_id) + \
+        "' AND to_id = '" + str(to_id) + "' AND color = '" + \
         color + "' AND site_id = '" + site_id + "'"
     cursor = cnx.cursor()
     cursor2 = cnx.cursor()
@@ -189,140 +253,25 @@ def updateWeight(cnx, from_id, to_id, color, site_id):
     
 
 #bulid relationship (red to red) (green to green) in each comment
-# def build_relationship(cnx,keyword_lst, color, site_id):
-#     for i in range(len(keyword_lst) - 1):
-#         print(keyword_lst[i], color)
-#         cursor1 = cnx.cursor(buffered=True)
-#         cursor2 = cnx.cursor(buffered=True)
-#         sql = "SELECT id FROM `segment_data` WHERE segment = '" + \
-#             keyword_lst[i] + "' AND color = '" + color + "'"
-#         sql_2 = "SELECT id FROM `segment_data` WHERE segment = '" + \
-#             keyword_lst[i+1] + "' AND color = '" + color + "'"
-#         cursor1.execute(sql)
-#         cursor2.execute(sql_2)
-#         from_id = ""
-#         to_id = ""
-#         for ele in cursor1:
-#             from_id = ele[0]
-#         for elee in cursor2:
-#             to_id = elee[0]
-#         add_Relationship(cnx,from_id, to_id, site_id)
+def build_relationship(cnx, from_seg, to_seg, color, site_id):
+    cursor1 = cnx.cursor(buffered=True)
+    cursor2 = cnx.cursor(buffered=True)
+    sql = "SELECT id FROM `segment_data` WHERE segment = '" + \
+        from_seg + "' AND color = '" + color + "'"
+    sql_2 = "SELECT id FROM `segment_data` WHERE segment = '" + \
+        to_seg + "' AND color = '" + color + "'"
+    cursor1.execute(sql)
+    cursor2.execute(sql_2)
+    from_id = ""
+    to_id = ""
+    for ele in cursor1:
+        from_id = ele[0]
+    for elee in cursor2:
+        to_id = elee[0]
+    return from_id,to_id
 
 def main():
     cnx = config()
     comment_seg(cnx)
 
 main()
-
-
-   # max_weight = 1
-   # second_weight = 1
-# max_index = 0
-# second_index = 0
-# for j in range(len(nodes_array)):
-#     print(nodes_array[j][0],nodes_array[j][2])
-#     if nodes_array[j][2] > max_weight:
-#         max_weight = nodes_array[j][2]
-#         max_index = j
-#     elif(nodes_array[j][2] > second_weight and nodes_array[j][2] < max_weight):
-#         second_weight = nodes_array[j][2]
-#         second_index = j
-# print(nodes_array[max_index][0],max_weight)
-# print(nodes_array[second_index][0], second_weight)
-# for relationship in relationships_array:
-#     print(relationship)
-
-# if (concludsion != None):
-#     if (color == "green") and (concludsion not in positive_seg):
-#         positive_seg.append(concludsion)
-#     elif (color == "red") and (concludsion not in negative_seg):
-#         negative_seg.append(concludsion)
-# else:
-#     pass
-# keyword_lst.append(positive_seg)
-# keyword_lst.append(negative_seg)
-# print(keyword_lst)
-# ct = 0
-# for pn_lst in keyword_lst:
-#     color = "green" if ct == 0 else "red"
-#     shape = "circle"
-#     idid = ""
-#     ct += 1
-#     for word in pn_lst:
-#         print(word,color)
-#     add_Data(cnx, idid, word, color, shape, site_id)
-# build_relationship(cnx, pn_lst, color, site_id)
-# for word in keyword_lst:
-#     shape = "circle"
-#     idid = ""
-#     add_Data(cnx, idid, word, color, shape, site_id)
-# build_relationship(cnx, keyword_lst, color, site_id)
-
-#change max,second weight color
-# def changeMaxTwoNodeColor(nodes_array):
-#     max_weight = 1
-#     second_weight = 1
-#     max_index = 0
-#     second_index = 0
-
-#     max_weight_N = 1
-#     second_weight_N = 1
-#     max_index_N = 0
-#     second_index_N = 0
-#     for j in range(len(nodes_array)):
-#         if(nodes_array[j][1] == 'green'):
-#             if nodes_array[j][2] > max_weight:
-#                 max_weight = nodes_array[j][2]
-#                 max_index = j
-#             elif(nodes_array[j][2] > second_weight and nodes_array[j][2] < max_weight):
-#                 second_weight = nodes_array[j][2]
-#                 second_index = j
-#         if(nodes_array[j][1] == 'red'):
-#             if nodes_array[j][2] > max_weight_N:
-#                 max_weight_N = nodes_array[j][2]
-#                 max_index_N = j
-#             elif(nodes_array[j][2] > second_weight_N and nodes_array[j][2] < max_weight_N):
-#                 second_weight_N = nodes_array[j][2]
-#                 second_index_N = j
-#     nodes_array[max_index][1] = "orange"
-#     nodes_array[second_index][1] = "orange"
-#     nodes_array[max_index_N][1] = "orange"
-#     nodes_array[second_index_N][1] = "orange"
-#     print("正面前二：", nodes_array[max_index][0], nodes_array[second_index][0])
-#     print("負面前二：", nodes_array[max_index_N][0], nodes_array[second_index_N][0])
-#     return nodes_array
-
-# #change max,second weight color
-# def changeMaxTwoRelationColor(relationships_array):
-#     max_weight = 1
-#     second_weight = 1
-#     max_index = 0
-#     second_index = 0
-
-#     max_weight_N = 1
-#     second_weight_N = 1
-#     max_index_N = 0
-#     second_index_N = 0
-
-#     for j in range(len(relationships_array)):
-#         if(relationships_array[j][1] == 'green'):
-#             if relationships_array[j][2] > max_weight:
-#                 max_weight = relationships_array[j][2]
-#                 max_index = j
-#             elif(relationships_array[j][2] > second_weight and relationships_array[j][2] < max_weight):
-#                 second_weight = relationships_array[j][2]
-#                 second_index = j
-#         if(relationships_array[j][1] == 'red'):
-#             if relationships_array[j][2] > max_weight_N:
-#                 max_weight_N = relationships_array[j][2]
-#                 max_index_N = j
-#             elif(relationships_array[j][2] > second_weight_N and relationships_array[j][2] < max_weight_N):
-#                 second_weight_N = relationships_array[j][2]
-#                 second_index_N = j
-#     relationships_array[max_index][1] = "orange"
-#     relationships_array[second_index][1] = "orange"
-#     relationships_array[max_index_N][1] = "orange"
-#     relationships_array[second_index_N][1] = "orange"
-#     print("正面前二：", relationships_array[max_index], relationships_array[second_index])
-#     print("負面前二：", relationships_array[max_index_N], relationships_array[second_index_N])
-# return relationships_array
