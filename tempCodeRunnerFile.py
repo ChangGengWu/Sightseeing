@@ -1,2 +1,1 @@
-    # markTopTwo_nodes(cnx)
-    # markTopTwo_relationships(cnx)
+add_Data(cnx, idid, word, color, shape, weight,evaluation,site_id)

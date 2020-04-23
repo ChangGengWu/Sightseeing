@@ -56,8 +56,10 @@ def comment_seg(cnx):
                 #segment ordering
                 if (color == "green") and (node not in positive_seg):
                     positive_seg.append([concludsion,color])
-                elif (color == "red") and (node not in negative_seg):
+                    evaluation = 'P'
+                elif (color == "#E6B7BE") and (node not in negative_seg):
                     negative_seg.append(node)
+                    evaluation = 'N'
                 flag = 0
                 #node add to array,if exists,weight + 1
                 for each in nodes_array:
@@ -80,24 +82,25 @@ def comment_seg(cnx):
             relationships_array.append([from_seg, to_seg])
 
     nodes_array.pop(0)
-    # for node in nodes_array:
-    #     idid=""
-    #     shape = "circle"
-    #     word = node[0]
-    #     color = node[1]
-    #     weight = node[2]
-    #     evaluation = node[3]
-    #     add_Data(cnx, idid, word, color, shape, weight,evaluation,site_id)
-    # relationships_array.pop(0)
-    # # print(relationships_array)
-    # for relationship in relationships_array:
-    #     from_seg = relationship[0][0]
-    #     color = relationship[0][1]
-    #     to_seg = relationship[1][0]
-    #     from_id,to_id = build_relationship(cnx, from_seg, to_seg, color, site_id)
-    #     print(from_id, to_id)
-    #     weight = 1
-    #     add_Relationship(cnx, from_id, to_id, color, weight, site_id)
+    print(nodes_array)
+    for node in nodes_array:
+        idid=""
+        shape = "circle"
+        word = node[0]
+        color = node[1]
+        weight = node[2]
+        evaluation = node[3]
+        add_Data(cnx, idid, word, color, shape, weight,evaluation,site_id)
+    relationships_array.pop(0)
+    print(relationships_array)
+    for relationship in relationships_array:
+        from_seg = relationship[0][0]
+        color = relationship[0][1]
+        to_seg = relationship[1][0]
+        from_id,to_id = build_relationship(cnx, from_seg, to_seg, color, site_id)
+        print(from_id, to_id,color)
+        weight = 4
+        add_Relationship(cnx, from_id, to_id, color, weight, site_id)
 
     markTopTwo_nodes(cnx)
     markTopTwo_relationships(cnx)
@@ -107,21 +110,24 @@ def markTopTwo_nodes(cnx):
     cursor = cnx.cursor(buffered=True)
     cursor2 = cnx.cursor(buffered=True)
     cursor3 = cnx.cursor(buffered=True)
-    sql_1 = "SELECT id FROM `segment_data` WHERE weight > 2 AND evaluation = 'P' ORDER BY weight DESC LIMIT 2"
-    sql_2 = "SELECT id FROM `segment_data` WHERE weight > 2 AND evaluation = 'N' ORDER BY weight DESC LIMIT 2"
+    sql_1 = "SELECT id,weight FROM `segment_data` WHERE weight >= 2 AND evaluation = 'P' ORDER BY weight DESC LIMIT 2"
+    sql_2 = "SELECT id,weight FROM `segment_data` WHERE weight >= 2 AND evaluation = 'N' ORDER BY weight DESC LIMIT 2"
     cursor.execute(sql_1)
     cursor3.execute(sql_2)
     counter = 0
     for rec in cursor:
         idid = rec[0]
+        weight = rec[1]
         print(id)
         query2 = ("UPDATE segment_data"
-                  " SET color=%s"
+                  " SET color=%s,weight=%s"
                   " WHERE id=%s")
         if counter == 0:
-            data = ("brown",idid)
+            weight = weight * 10
+            data = ("#C53F52", weight, idid)
         else:
-            data = ("blue", idid)
+            weight = weight * 8
+            data = ("#EDAAB3",weight, idid)
         cursor2.execute(query2, data)
         cnx.commit()
         counter += 1
@@ -129,14 +135,16 @@ def markTopTwo_nodes(cnx):
     counter2 = 0
     for rec in cursor3:
         idid = rec[0]
-        print(id)
+        weight = rec[1]
         query2 = ("UPDATE segment_data"
                   " SET color=%s"
                   " WHERE id=%s")
         if counter2 == 0:
-            data = ("yello", idid)
+            weight = weight * 10
+            data = ("#C42A56", idid)
         else:
-            data = ("gray", idid)
+            weight = weight * 8
+            data = ("#D6727C", idid)
         cursor2.execute(query2, data)
         cnx.commit()
         counter2 += 1
@@ -146,36 +154,22 @@ def markTopTwo_relationships(cnx):
     cursor = cnx.cursor(buffered=True)
     cursor2 = cnx.cursor(buffered=True)
     cursor3 = cnx.cursor(buffered=True)
-    sql_1 = "SELECT from_id,to_id,site_id FROM `segment_relationship` WHERE weight >= 2 ORDER BY weight DESC LIMIT 6"
+    sql_1 = "SELECT from_id,to_id,site_id,weight FROM `segment_relationship` WHERE weight >= 5 ORDER BY weight DESC LIMIT 6"
     cursor.execute(sql_1)
     counter = 0
     for rec in cursor:
         idid = rec[2]
         from_id = rec[0]
         to_id = rec[1]
+        weight = rec[3] * 5
         print(id)
         query2 = ("UPDATE segment_relationship"
-                  " SET color=%s"
+                  " SET color=%s,weight=%s"
                   " WHERE from_id=%s AND to_id=%s AND site_id=%s")
-        data = ("orange", from_id,to_id,idid)
+        data = ("#E6790D", weight,from_id,to_id,idid)
         cursor2.execute(query2, data)
         cnx.commit()
         counter += 1
-
-    counter2 = 0
-    for rec in cursor3:
-        idid = rec[0]
-        print(id)
-        query2 = ("UPDATE segment_data"
-                  " SET color=%s"
-                  " WHERE id=%s")
-        if counter2 == 0:
-            data = ("yello", idid)
-        else:
-            data = ("gray", idid)
-        cursor2.execute(query2, data)
-        cnx.commit()
-        counter2 += 1
 
 #add segment to database
 def add_Data(cnx, new_id, segment, color, shape, weight,evaluation, site_id):
@@ -224,12 +218,12 @@ def getColor(index,eval):
     if(index == 1):
         color = color
     elif(index == 0):
-        color = "red"
+        color = "#E6B7BE"
     elif(index == 2):
         if(eval == "P"):
             color = color
         else:
-            color = "red"
+            color = "#E6B7BE"
     return color
 
 
