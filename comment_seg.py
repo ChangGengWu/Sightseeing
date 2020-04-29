@@ -6,128 +6,143 @@ import numpy as np
 
 #建立connecter
 def config():
+    # cnx = mysql.connector.connect(
+    #     host="140.136.155.116",
+    #     user="root",
+    #     passwd="sightseeing",
+    #     database='homestead',
+    #     buffered=True
+    # )
     cnx = mysql.connector.connect(
         host="localhost",
         user="root",
         passwd="12345678",
-        database='test3',
+        database='test4',
         buffered=True
     )
     return cnx
 
 def comment_seg(cnx):
-    cursor_all = cnx.cursor()
-    sql = "SELECT id, comment, evaluation, Sid FROM `user_comment` WHERE Sid = 'S0102'"
-    #sql = "SELECT id, comment, evaluation, Sid FROM `hotel_comment` WHERE Sid = 'H00008'"
-    cursor_all.execute(sql)
-    #array that save node's value,color,weight,eval
-    nodes_array = [["value", "color", 0,'eval']]
-    #array that save relationships's from,to,weight
-    relationships_array = [[["from", "color"], ["to", "color"]]]
-    for each in cursor_all:
-        result = []
-        comment = each[1]
-        evaluation = each[2]
-        site_id = each[3]
-        print("=================================================")
-        # print(comment)
-        keyword_lst = []
-        #將評論所有標點符號取代成 "#"
-        strip_chars = '？"。.，,！～!~《》[]〖〗“”  )('
-        comment = comment.translate(
-            comment.maketrans(dict.fromkeys(strip_chars, "#")))
-        #將評論以 "#" 分開
-        seg_lst = comment.split("#")
-        #建立touringDict() 物件
-        sentence = touringDict()
-        positive_seg = []
-        negative_seg = []
-        for seg in seg_lst:
-            #set sentence to object
-            sentence.setSentence(seg)
-            #call object function getConclusion() to get the conclusuon of sentence
-            concludsion = sentence.getConclusion()
-            #call object function ifPositive() to get the index (0 = negative ,1 = positive,2 = unknown)
-            color_index = sentence.ifPositive()
-            color = getColor(color_index,evaluation)
-            if (concludsion != None):
-                print(concludsion,color)
-                node = [concludsion,color]
-                #segment ordering
-                if (color == "green") and (node not in positive_seg):
-                    positive_seg.append([concludsion,color])
-                    evaluation = 'P'
-                elif (color == "#E6B7BE") and (node not in negative_seg):
-                    negative_seg.append(node)
-                    evaluation = 'N'
+    cursor_id = cnx.cursor()
+    query = "SELECT DISTINCT sid FROM `user_comment`"
+    cursor_id.execute(query)
+    for sid in cursor_id:
+        s_id = sid[0]
+        cursor_all = cnx.cursor()
+        sql = "SELECT id, comment, evaluation, sid FROM `user_comment` WHERE Sid = '" + s_id + "'"
+        #sql = "SELECT id, comment, evaluation, Sid FROM `hotel_comment` WHERE Sid = 'H00008'"
+        cursor_all.execute(sql)
+        #array that save node's value,color,weight,eval
+        nodes_array = [["value", "color", 0,'eval']]
+        #array that save relationships's from,to,weight
+        relationships_array = [[["from", "color"], ["to", "color"]]]
+        for each in cursor_all:
+            result = []
+            comment = each[1]
+            evaluation = each[2]
+            site_id = each[3]
+            print("=================================================")
+            print(comment)
+            keyword_lst = []
+            #將評論所有標點符號取代成 "#"
+            strip_chars = '？"。.，,！～!~《》[]〖〗“”  )('
+            comment = comment.translate(
+                comment.maketrans(dict.fromkeys(strip_chars, "#")))
+            #將評論以 "#" 分開
+            seg_lst = comment.split("#")
+            #建立touringDict() 物件
+            sentence = touringDict()
+            positive_seg = []
+            negative_seg = []
+            for seg in seg_lst:
+                #set sentence to object
+                sentence.setSentence(seg)
+                #call object function getConclusion() to get the conclusuon of sentence
+                concludsion = sentence.getConclusion()
+                #call object function ifPositive() to get the index (0 = negative ,1 = positive,2 = unknown)
+                color_index = sentence.ifPositive()
+                color = getColor(color_index,evaluation)
+                if (concludsion != None):
+                    print(concludsion,color)
+                    node = [concludsion,color]
+                    #segment ordering
+                    if (color == "green") and (node not in positive_seg):
+                        positive_seg.append([concludsion,color])
+                        evaluation = 'P'
+                    elif (color == "#E6B7BE") and (node not in negative_seg):
+                        negative_seg.append(node)
+                        evaluation = 'N'
+                    flag = 0
+                    #node add to array,if exists,weight + 1
+                    for each in nodes_array:
+                        if each[0] == concludsion and  each[1] == color:
+                            each[2] += 1
+                            flag = 1
+                            break
+                    if flag == 0:nodes_array.append([concludsion,color,1,evaluation])
+
+            for i in range(len(positive_seg) - 1):
+                from_seg = positive_seg[i]
+                to_seg = positive_seg[i+1]
                 flag = 0
-                #node add to array,if exists,weight + 1
-                for each in nodes_array:
-                    if each[0] == concludsion and  each[1] == color:
-                        each[2] += 1
-                        flag = 1
-                        break
-                if flag == 0:nodes_array.append([concludsion,color,1,evaluation])
+                relationships_array.append([from_seg, to_seg])
+            
+            for i in range(len(negative_seg) - 1):
+                from_seg = negative_seg[i]
+                to_seg = negative_seg[i+1]
+                flag = 0
+                relationships_array.append([from_seg, to_seg])
 
-        for i in range(len(positive_seg) - 1):
-            from_seg = positive_seg[i]
-            to_seg = positive_seg[i+1]
-            flag = 0
-            relationships_array.append([from_seg, to_seg])
-        
-        for i in range(len(negative_seg) - 1):
-            from_seg = negative_seg[i]
-            to_seg = negative_seg[i+1]
-            flag = 0
-            relationships_array.append([from_seg, to_seg])
+        nodes_array.pop(0)
+        print(nodes_array)
+        for node in nodes_array:
+            idid=""
+            shape = "circle"
+            word = node[0]
+            color = node[1]
+            weight = node[2]
+            evaluation = node[3]
+            add_Data(cnx, idid, word, color, shape, weight,evaluation,site_id)
+        relationships_array.pop(0)
+        print(relationships_array)
+        for relationship in relationships_array:
+            from_seg = relationship[0][0]
+            color = relationship[0][1]
+            to_seg = relationship[1][0]
+            from_id,to_id = build_relationship(cnx, from_seg, to_seg, color, site_id)
+            print(from_id, to_id,color)
+            weight = 1
+            add_Relationship(cnx, from_id, to_id, color, weight, site_id)
 
-    nodes_array.pop(0)
-    print(nodes_array)
-    for node in nodes_array:
-        idid=""
-        shape = "circle"
-        word = node[0]
-        color = node[1]
-        weight = node[2]
-        evaluation = node[3]
-        add_Data(cnx, idid, word, color, shape, weight,evaluation,site_id)
-    relationships_array.pop(0)
-    print(relationships_array)
-    for relationship in relationships_array:
-        from_seg = relationship[0][0]
-        color = relationship[0][1]
-        to_seg = relationship[1][0]
-        from_id,to_id = build_relationship(cnx, from_seg, to_seg, color, site_id)
-        print(from_id, to_id,color)
-        weight = 4
-        add_Relationship(cnx, from_id, to_id, color, weight, site_id)
-
-    markTopTwo_nodes(cnx)
-    markTopTwo_relationships(cnx)
+        markTopTwo_nodes(cnx,s_id)
+        markTopTwo_relationships(cnx,s_id)
 
 
-def markTopTwo_nodes(cnx):
+def markTopTwo_nodes(cnx,s_id):
     cursor = cnx.cursor(buffered=True)
     cursor2 = cnx.cursor(buffered=True)
     cursor3 = cnx.cursor(buffered=True)
-    sql_1 = "SELECT id,weight FROM `segment_data` WHERE weight >= 2 AND evaluation = 'P' ORDER BY weight DESC LIMIT 2"
-    sql_2 = "SELECT id,weight FROM `segment_data` WHERE weight >= 2 AND evaluation = 'N' ORDER BY weight DESC LIMIT 2"
+    sql_1 = "SELECT id,weight FROM `segment_data` WHERE site_id = '" + s_id + "' AND weight >= 2 AND evaluation = 'P' ORDER BY weight DESC LIMIT 2"
+    sql_2 = "SELECT id,weight FROM `segment_data` WHERE site_id = '" + s_id + \
+        "' AND weight >= 2 AND evaluation = 'N' ORDER BY weight DESC LIMIT 2"
     cursor.execute(sql_1)
     cursor3.execute(sql_2)
     counter = 0
     for rec in cursor:
         idid = rec[0]
         weight = rec[1]
-        print(id)
         query2 = ("UPDATE segment_data"
                   " SET color=%s,weight=%s"
                   " WHERE id=%s")
         if counter == 0:
-            weight = weight * 10
-            data = ("#C53F52", weight, idid)
+            new_weight = weight * 10
+            print(weight,"------>",new_weight)
+            #"#C53F52","#EDAAB3"
+            data = ("#33FF66", new_weight, idid)
         else:
-            weight = weight * 8
-            data = ("#EDAAB3",weight, idid)
+            new_weight = weight * 8
+            print(weight, "------>", new_weight)
+            data = ("#33FFCC", new_weight, idid)
         cursor2.execute(query2, data)
         cnx.commit()
         counter += 1
@@ -137,36 +152,38 @@ def markTopTwo_nodes(cnx):
         idid = rec[0]
         weight = rec[1]
         query2 = ("UPDATE segment_data"
-                  " SET color=%s"
+                  " SET color=%s,weight=%s"
                   " WHERE id=%s")
         if counter2 == 0:
-            weight = weight * 10
-            data = ("#C42A56", idid)
+            new_weight = weight * 10
+            data = ("#C42A56", new_weight, idid)
         else:
-            weight = weight * 8
-            data = ("#D6727C", idid)
+            new_weight = weight * 8
+            data = ("#D6727C", new_weight, idid)
         cursor2.execute(query2, data)
         cnx.commit()
         counter2 += 1
 
 
-def markTopTwo_relationships(cnx):
+def markTopTwo_relationships(cnx,s_id):
     cursor = cnx.cursor(buffered=True)
     cursor2 = cnx.cursor(buffered=True)
     cursor3 = cnx.cursor(buffered=True)
-    sql_1 = "SELECT from_id,to_id,site_id,weight FROM `segment_relationship` WHERE weight >= 5 ORDER BY weight DESC LIMIT 6"
+    sql_1 = "SELECT from_id,to_id,site_id,weight FROM `segment_relationship` WHERE site_id = '" + \
+        s_id + "' AND weight >= 2 ORDER BY weight DESC LIMIT 6"
     cursor.execute(sql_1)
     counter = 0
     for rec in cursor:
         idid = rec[2]
         from_id = rec[0]
         to_id = rec[1]
-        weight = rec[3] * 5
-        print(id)
+        weight = rec[3]
+        new_weight = weight * 6
+        print(weight,"-------->",new_weight)
         query2 = ("UPDATE segment_relationship"
                   " SET color=%s,weight=%s"
                   " WHERE from_id=%s AND to_id=%s AND site_id=%s")
-        data = ("#E6790D", weight,from_id,to_id,idid)
+        data = ("#E6790D", new_weight,from_id,to_id,idid)
         cursor2.execute(query2, data)
         cnx.commit()
         counter += 1
@@ -176,8 +193,8 @@ def add_Data(cnx, new_id, segment, color, shape, weight,evaluation, site_id):
     cursor = cnx.cursor(buffered=True)
     add_data = ("INSERT INTO segment_data"
                 "(id, segment, color, shape,weight,evaluation ,site_id)"
-                "VALUES (%s,%s,%s,%s,%s,%s,%s)")
-    data = (new_id, segment, color, shape,weight,evaluation, site_id)
+                "VALUES (NULL,%s,%s,%s,%s,%s,%s)")
+    data = (segment, color, shape,weight,evaluation, site_id)
     cursor.execute(add_data, data)
     cnx.commit()
 

@@ -236,3 +236,8 @@ import numpy as np
 #     "' AND to_id = '" + str(to_id) + "' AND color = '" + \
 #     color + "' AND site_id = '" + site_id + "'"
 # print(sql)
+
+s_id = 's1111'
+sql= "SELECT id,weight FROM `segment_data` WHERE site_id = '" + s_id + \
+    "' weight >= 2 AND evaluation = 'P' ORDER BY weight DESC LIMIT 2"
+print(sql)
