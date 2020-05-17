@@ -27,10 +27,11 @@ def config():
 
 def comment_seg(cnx):
     cursor_id = cnx.cursor()
-    query = "SELECT DISTINCT sid FROM `hotel_comment`"
-    cursor_id.execute(query)
-    for sid in cursor_id:
-        s_id = sid[0]
+    # query = "SELECT DISTINCT sid FROM `hotel_comment`"
+    # cursor_id.execute(query)
+    target = ['H00065', 'H00067', 'H00153', 'H00730', 'H00732', 'H00734', 'H01310', 'H01401', 'H02654',
+              'H03730', 'H05081', 'H07335', 'H09870', 'H09967', 'H10942', 'H13151', 'H14037']
+    for s_id in target:
         cursor_all = cnx.cursor()
         sql = "SELECT id, comment, evaluation, sid FROM `hotel_comment` WHERE Sid = '" + s_id + "'"
         #sql = "SELECT id, comment, evaluation, Sid FROM `hotel_comment` WHERE Sid = 'H00008'"

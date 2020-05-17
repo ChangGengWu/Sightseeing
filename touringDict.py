@@ -23,6 +23,7 @@ class touringDict:
         adj = self.getAdj()
         classification = self.getClassification()
         conclusion = str(n) + str(classification)
+        print(conclusion)
         conclude = dictFilter(conclusion)
         return conclude
         
@@ -69,6 +70,9 @@ class touringDict:
         else:
             return 2
     def getClassification(self):
+        human = ["人", "小孩", "老人", "小朋友", "老年人", "身障者",
+                 "年長者", "年長的人", "遊客", "親子", "遊民", "一家大小"]
+        noun = self.getNoun()
         adjs = self.getAdj()
         many = ['種類多', '有點多', '多到爆', '非常多', '蠻多', '超多',
                 '很多', '許多', '滿滿', '不少', '多', '大量', '豐富', '多']
@@ -127,35 +131,74 @@ class touringDict:
         elif(adjs in small):
             conclusion = "小"
         elif(adjs in inexpensive):
-            conclusion = "便宜"
+            if noun in human:
+                conclusion = "覺得便宜"
+            else:
+                conclusion = "便宜"
         elif(adjs in free):
             conclusion = "免費"
         elif(adjs in expensive):
-            conclusion = "昂貴"
+            if noun in human:
+                conclusion = "覺得昂貴"
+            else:
+                conclusion = "昂貴"
         elif(adjs in beautiful):
-            conclusion = "美麗"
+            if noun in human:
+                conclusion = "覺得美麗"
+            else:
+                conclusion = "美麗"
         elif(adjs in ugly):
-            conclusion = "不好看"
+            if noun in human:
+                conclusion = "覺得不好看"
+            else:
+                conclusion = "不好看"
         elif(adjs in delicious):
-            conclusion = "好吃"
+            if noun in human:
+                conclusion = "覺得好吃"
+            else:
+                conclusion = "好吃"
         elif(adjs in yucky):
-            conclusion = "難吃"
+            if noun in human:
+                conclusion = "覺得難吃"
+            else:
+                conclusion = "難吃"
         elif(adjs in wonderful):
             conclusion = "值得一看"
         elif(adjs in boring):
-            conclusion = "無趣"
+            if noun in human:
+                conclusion = "覺得無趣"
+            else:
+                conclusion = "無趣"
         # elif(adjs in hot):
-        #     conclusion = "炎熱"
+        #     if noun in human:
+        #         conclusion = "覺得炎熱"
+        #     else:
+        #         conclusion = "炎熱"
         # elif(adjs in cold):
-        #     conclusion = "寒冷"
+        #     if noun in human:
+        #         conclusion = "覺得寒冷"
+        #     else:
+        #         conclusion = "寒冷"
         elif(adjs in clean):
-            conclusion = "乾淨"
+            if noun in human:
+                conclusion = "覺得乾淨"
+            else:
+                conclusion = "乾淨"
         elif(adjs in mess):
-            conclusion = "髒亂"
+            if noun in human:
+                conclusion = "覺得髒亂"
+            else:
+                conclusion = "髒亂"
         elif(adjs in convenient):
-            conclusion = "方便"
+            if noun in human:
+                conclusion = "覺得方便"
+            else:
+                conclusion = "方便"
         elif(adjs in inconvenient):
-            conclusion = "不方便"
+            if noun in human:
+                conclusion = "覺得不方便"
+            else:
+                conclusion = "不方便"
         elif(adjs in insufficient):
             conclusion = "不足"
         elif(adjs in good_manner):
@@ -163,27 +206,54 @@ class touringDict:
         elif(adjs in bad_manner):
             conclusion = "態度不佳"
         elif(adjs in far):
-            conclusion = "遙遠"
+            if noun in human:
+                conclusion = "覺得遙遠"
+            else:
+                conclusion = "遙遠"
         elif(adjs in recommend):
             conclusion = "推薦前往"
         elif(adjs in hard_to_find):
-            conclusion = "難找"
+            if noun in human:
+                conclusion = "覺得難找"
+            else:
+                conclusion = "難找"
         elif(adjs in many_people):
-            conclusion = "擁擠"
+            if noun in human:
+                conclusion = "覺得擁擠"
+            else:
+                conclusion = "擁擠"
         elif(adjs in quient):
-            conclusion = "寧靜"
+            if noun in human:
+                conclusion = "覺得寧靜"
+            else:
+                conclusion = "寧靜"
         elif(adjs in lively):
-            conclusion = "熱鬧"
+            if noun in human:
+                conclusion = "覺得熱鬧"
+            else:
+                conclusion = "熱鬧"
         elif(adjs in comfortable):
-            conclusion = "舒適"
+            if noun in human:
+                conclusion = "覺得舒適"
+            else:
+                conclusion = "舒適"
         elif(adjs in blurry):
-            conclusion = "不清楚"
+                conclusion = "不清楚"
         elif(adjs in good):
-            conclusion = "評價好的"
+            if noun in human:
+                conclusion = "覺得評價好的"
+            else:
+                conclusion = "評價好的"
         elif(adjs in bad):
-            conclusion = "評價差的"
+            if noun in human:
+                conclusion = "覺得評價差的"
+            else:
+                conclusion = "評價差的"
         elif (adjs in elses):
-            conclusion = adjs
+            if noun in human:
+                conclusion = "覺得" + adjs
+            else:
+                conclusion = adjs
         elif (adjs in close):
             conclusion = "鄰近"
         elif (adjs in sufficient):
@@ -193,7 +263,10 @@ class touringDict:
         elif (adjs in low):
             conclusion = "低"
         elif (adjs in interesting):
-            conclusion = "有趣"
+            if noun in human:
+                conclusion = "覺得有趣"
+            else:
+                conclusion = "有趣"
         elif (adjs in have):
             conclusion = "具備"
         elif (adjs in no_have):

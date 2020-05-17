@@ -344,21 +344,22 @@ def dbTaipei_Search():
         host="localhost",
         user="root",
         passwd="12345678",
-        database='test3'
+        database='test4'
     )
     cursor = cnx.cursor()
 
     # query
-    query = "SELECT id , name , href , city_name  FROM `hotel_data` WHERE comment>50"
-    cursor.execute(query)
-
-
-    for (Sid, name, href, city_name) in cursor:
-        idlst.append(Sid)
-        namelst.append(name)
-        hreflst.append(href)
-        citylst.append(city_name)
-        countSite += 1
+    target = ['H00732', 'H09870', 'H14037']
+    
+    for i in target:
+        query = "SELECT id , name , href , city_name  FROM `hotel_data` WHERE id = '" + i + "'"
+        cursor.execute(query)
+        for (Sid, name, href, city_name) in cursor:
+            idlst.append(Sid)
+            namelst.append(name)
+            hreflst.append(href)
+            citylst.append(city_name)
+            countSite += 1
         
     # print(Sid,href,city_name)
 
@@ -376,7 +377,7 @@ def dataBase():
         host="localhost",
         user="root",
         passwd="12345678",
-        database='test3'
+        database='test4'
     )
     cursor = cnx.cursor()
 
@@ -433,7 +434,7 @@ print(siteCount)
 "搜尋各個景點的評論者"
 no = 175
 #1003
-for cout in range(1133, siteCount):
+for cout in range(0, siteCount):
     # sleep(3)
     # 評論者名稱/網址/造訪日期/評論ß
     Good_name = []
@@ -452,6 +453,7 @@ for cout in range(1133, siteCount):
 
         try:
             driver.get(url)
+            sleep(5)
         except:
             print("Connection refused by the server..")
             print("Let me sleep for 5 seconds")

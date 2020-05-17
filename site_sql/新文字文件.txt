@@ -1,0 +1,1 @@
+SELECT * FROM site_data WHERE name REGEXP '[A-Za-z0-9]';

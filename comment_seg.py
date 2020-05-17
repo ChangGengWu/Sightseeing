@@ -45,7 +45,7 @@ def comment_seg(cnx):
             print(comment)
             keyword_lst = []
             #將評論所有標點符號取代成 "#"
-            strip_chars = '？"。.，,！～!~《》[]〖〗“”  )('
+            strip_chars = '？"。.，,！～!~《》[]〖〗“”  )(、'
             comment = comment.translate(
                 comment.maketrans(dict.fromkeys(strip_chars, "#")))
             #將評論以 "#" 分開
@@ -64,58 +64,58 @@ def comment_seg(cnx):
                 color = getColor(color_index,evaluation)
                 if (concludsion != None):
                     print(concludsion,color)
-                    node = [concludsion,color]
-                    #segment ordering
-                    if (color == "green") and (node not in positive_seg):
-                        positive_seg.append([concludsion,color])
-                        evaluation = 'P'
-                    elif (color == "#E6B7BE") and (node not in negative_seg):
-                        negative_seg.append(node)
-                        evaluation = 'N'
-                    flag = 0
-                    #node add to array,if exists,weight + 1
-                    for each in nodes_array:
-                        if each[0] == concludsion and  each[1] == color:
-                            each[2] += 1
-                            flag = 1
-                            break
-                    if flag == 0:nodes_array.append([concludsion,color,1,evaluation])
+        #             node = [concludsion,color]
+        #             #segment ordering
+        #             if (color == "green") and (node not in positive_seg):
+        #                 positive_seg.append([concludsion,color])
+        #                 evaluation = 'P'
+        #             elif (color == "#E6B7BE") and (node not in negative_seg):
+        #                 negative_seg.append(node)
+        #                 evaluation = 'N'
+        #             flag = 0
+        #             #node add to array,if exists,weight + 1
+        #             for each in nodes_array:
+        #                 if each[0] == concludsion and  each[1] == color:
+        #                     each[2] += 1
+        #                     flag = 1
+        #                     break
+        #             if flag == 0:nodes_array.append([concludsion,color,1,evaluation])
 
-            for i in range(len(positive_seg) - 1):
-                from_seg = positive_seg[i]
-                to_seg = positive_seg[i+1]
-                flag = 0
-                relationships_array.append([from_seg, to_seg])
+        #     for i in range(len(positive_seg) - 1):
+        #         from_seg = positive_seg[i]
+        #         to_seg = positive_seg[i+1]
+        #         flag = 0
+        #         relationships_array.append([from_seg, to_seg])
             
-            for i in range(len(negative_seg) - 1):
-                from_seg = negative_seg[i]
-                to_seg = negative_seg[i+1]
-                flag = 0
-                relationships_array.append([from_seg, to_seg])
+        #     for i in range(len(negative_seg) - 1):
+        #         from_seg = negative_seg[i]
+        #         to_seg = negative_seg[i+1]
+        #         flag = 0
+        #         relationships_array.append([from_seg, to_seg])
 
-        nodes_array.pop(0)
-        print(nodes_array)
-        for node in nodes_array:
-            idid=""
-            shape = "circle"
-            word = node[0]
-            color = node[1]
-            weight = node[2]
-            evaluation = node[3]
-            add_Data(cnx, idid, word, color, shape, weight,evaluation,site_id)
-        relationships_array.pop(0)
-        print(relationships_array)
-        for relationship in relationships_array:
-            from_seg = relationship[0][0]
-            color = relationship[0][1]
-            to_seg = relationship[1][0]
-            from_id,to_id = build_relationship(cnx, from_seg, to_seg, color, site_id)
-            print(from_id, to_id,color)
-            weight = 1
-            add_Relationship(cnx, from_id, to_id, color, weight, site_id)
+        # nodes_array.pop(0)
+        # print(nodes_array)
+        # for node in nodes_array:
+        #     idid=""
+        #     shape = "circle"
+        #     word = node[0]
+        #     color = node[1]
+        #     weight = node[2]
+        #     evaluation = node[3]
+        #     add_Data(cnx, idid, word, color, shape, weight,evaluation,site_id)
+        # relationships_array.pop(0)
+        # print(relationships_array)
+        # for relationship in relationships_array:
+        #     from_seg = relationship[0][0]
+        #     color = relationship[0][1]
+        #     to_seg = relationship[1][0]
+        #     from_id,to_id = build_relationship(cnx, from_seg, to_seg, color, site_id)
+        #     print(from_id, to_id,color)
+        #     weight = 1
+        #     add_Relationship(cnx, from_id, to_id, color, weight, site_id)
 
-        markTopTwo_nodes(cnx,s_id)
-        markTopTwo_relationships(cnx,s_id)
+        # markTopTwo_nodes(cnx,s_id)
+        # markTopTwo_relationships(cnx,s_id)
 
 
 def markTopTwo_nodes(cnx,s_id):

@@ -358,23 +358,25 @@ def dbTaipei_Search():
         host="localhost",
         user="root",
         passwd="12345678",
-        database='test3',
+        database='test4',
     )
     cursor = cnx.cursor()
 
     # query
-    query = "SELECT id , name , href , city_name  FROM `hotel_data` WHERE city_name = '台北' AND comment>50 "
-    cursor.execute(query)
-
-    ct = 0
-    for (Sid, name, href, city_name) in cursor:
-        print(Sid,name)
-        idlst.append(Sid)
-        namelst.append(name)
-        hreflst.append(href)
-        citylst.append(city_name)
-        countSite += 1
-    print("哈哈",len(idlst))
+    target = ['H00065', 'H00067', 'H00153', 'H00730', 'H00732', 'H00734', 'H01310', 'H01401', 'H02654',
+        'H03730', 'H05081', 'H07335', 'H09870', 'H09967', 'H10942', 'H13151', 'H14037']
+    for i in target:
+        query = "SELECT id , name , href , city_name  FROM `hotel_data` WHERE id = '"+ i +"'"
+        cursor.execute(query)
+        ct = 0
+        for (Sid, name, href, city_name) in cursor:
+            print(Sid,name)
+            idlst.append(Sid)
+            namelst.append(name)
+            hreflst.append(href)
+            citylst.append(city_name)
+            countSite += 1
+        print("哈哈",len(idlst))
     # print(Sid,href,city_name)
 
     # Make sure data is committed to the database
@@ -388,7 +390,7 @@ def dbTaipei_Search():
 def dataBase():
 
     cnx = mysql.connector.connect(
-        user="root", password="12345678", host="localhost", database="test3"
+        user="root", password="12345678", host="localhost", database="test4"
     )
     cursor = cnx.cursor()
 

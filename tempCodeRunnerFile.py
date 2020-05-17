@@ -1,1 +1,1 @@
-add_Data(cnx, idid, word, color, shape, weight,evaluation,site_id)
+                print(each)
